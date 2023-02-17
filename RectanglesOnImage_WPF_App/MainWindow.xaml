@@ -22,8 +22,8 @@
 				Fill="{Binding Color, Converter={StaticResource colorToSolidColorBrushConverter}}"
 				Cursor="Hand"
 				MouseDown="Rectangle_MouseDown"
-				MouseUp="Rectangle_MouseUp"
 				MouseMove="Rectangle_MouseMove"
+				MouseUp="Rectangle_MouseUp"
 				/>
 		</DataTemplate>
 
@@ -107,13 +107,26 @@
 				<!-- Save image btn-->
 				<ColumnDefinition  Width="100" />
 
-				<!--middle emptyof the space-->
+				<!--middle empty of the space-->
 				<ColumnDefinition Width="*" />
 
-				<!--current picked color -->
+				<!--current picked color in the middle -->
 				<ColumnDefinition Width="50" />
-				<!--color picker-->
-				<ColumnDefinition Width="50" />
+				<!--middle empty of the space-->
+
+				<ColumnDefinition Width="*" />
+
+				<!--color picker yellow-->
+				<ColumnDefinition Width="30" />
+				<!--color picker blue-->
+				<ColumnDefinition Width="30" />
+				<!--color picker red-->
+				<ColumnDefinition Width="30" />
+				<!--color picker black-->
+				<ColumnDefinition Width="30" />
+				<!--color picker white-->
+				<ColumnDefinition Width="30" />
+
 				<!--fill tool-->
 				<ColumnDefinition Width="50" />
 				<!--rectangle tool-->
@@ -127,6 +140,7 @@
 				x:Name="btn_LoadImg"
 				Grid.Column="0"
 				Margin="5"
+				Cursor="Hand"
 				Click="btn_loadImg_Click"
 				Background="LightGray"
 				Foreground="Black"
@@ -139,6 +153,7 @@
 				x:Name="btn_SaveImg"
 				Grid.Column="1"
 				Margin="5"
+				Cursor="Hand"
 				Click="btn_SaveImg_Click"
 				Background="LightGray"
 				Foreground="Black"
@@ -158,29 +173,110 @@
 			</Rectangle>
 
 
-			<!--button to pick a color -->
+			<!--buttons to pick a color -->
+
+
+			<!--red color-->
 			<Button
-				x:Name="btn_colorPicker"
-				Grid.Column="4"
+				x:Name="btn_colorPicker__red"
+				Grid.Column="5"
+				Grid.Row="0"
+				Grid.RowSpan="3"
 				Margin="5"
-				Click="btn_colorPicker_Click"
-				Background="LightGray"
-				Foreground="Black"
+				Cursor="Hand"
+				Click="btn_colorPicker__red_Click"
+				Background="Red"
 				>
 				<Button.ToolTip>
 					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
-						Tool to chose current active color
+						Set red as the active color.
 					</ToolTip>
 				</Button.ToolTip>
-				<!--<Image Source="pack://application:,,,/resources/icons/color.png"/>-->
-				Color
+				<!--adding a image from code behind-->
+			</Button>
+
+			<!--green color-->
+			<Button
+				x:Name="btn_colorPicker__green"
+				Grid.Column="6"
+				Grid.Row="0"
+				Grid.RowSpan="3"
+				Margin="5"
+				Cursor="Hand"
+				Click="btn_colorPicker__green_Click"
+				Background="green"
+				>
+				<Button.ToolTip>
+					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
+						Set yellow as the active color.
+					</ToolTip>
+				</Button.ToolTip>
+				<!--adding a image from code behind-->
+			</Button>
+
+			<!--blue color-->
+			<Button
+				x:Name="btn_colorPicker__blue"
+				Grid.Column="7"
+				Grid.Row="0"
+				Grid.RowSpan="3"
+				Margin="5"
+				Cursor="Hand"
+				Click="btn_colorPicker__blue_Click"
+				Background="Blue"
+				>
+				<Button.ToolTip>
+					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
+						Set blue as the active color.
+					</ToolTip>
+				</Button.ToolTip>
+				<!--adding a image from code behind-->
+			</Button>
+
+			<!--black color-->
+			<Button
+				x:Name="btn_colorPicker__black"
+				Grid.Column="8"
+				Grid.Row="0"
+				Grid.RowSpan="3"
+				Margin="5"
+				Cursor="Hand"
+				Click="btn_colorPicker__black_Click"
+				Background="Black"
+				>
+				<Button.ToolTip>
+					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
+						Set black as the active color.
+					</ToolTip>
+				</Button.ToolTip>
+				<!--adding a image from code behind-->
+			</Button>
+
+			<!--white color-->
+			<Button
+				x:Name="btn_colorPicker__white"
+				Grid.Column="9"
+				Grid.Row="0"
+				Grid.RowSpan="3"
+				Margin="5"
+				Cursor="Hand"
+				Click="btn_colorPicker__white_Click"
+				Background="white"
+				>
+				<Button.ToolTip>
+					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
+						Set white as the active color.
+					</ToolTip>
+				</Button.ToolTip>
+				<!--adding a image from code behind-->
 			</Button>
 
 			<!--button to change the color when a rectangle is selected-->
 			<Button
 				x:Name="btn_fillTool"
-				Grid.Column="5"
+				Grid.Column="10"
 				Margin="5"
+				Cursor="Hand"
 				Click="btn_fillTool_Click"
 				Background="LightGray"
 				Foreground="Black"
@@ -194,15 +290,15 @@
 						Tool to change the color of the rectangles to the selected color
 					</ToolTip>
 				</Button.ToolTip>
-				<!--<Image Source="pack://application:,,,/resources/icons/bucket.png"/>-->
 				Fill
 			</Button>
 
 			<!--button to change the color when a rectangle is selected-->
 			<Button
 				x:Name="btn_rectangleTool"
-				Grid.Column="6"
+				Grid.Column="11"
 				Margin="5"
+				Cursor="Hand"
 				Click="btn_rectangleTool_Click"
 				Background="LightGray"
 				Foreground="Black"
@@ -223,8 +319,9 @@
 			<!--selected by default-->
 			<Button
 				x:Name="btn_handTool"
-				Grid.Column="7"
+				Grid.Column="12"
 				Margin="5"
+				Cursor="Hand"
 				Click="btn_handTool_Click"
 				Background="Black"
 				Foreground="White"
@@ -270,14 +367,14 @@
 					x:Name="canvas_drawing"
 					Background="Transparent"
 					MouseDown="canvas_drawing_MouseDown"
-					MouseUp="canvas_drawing_MouseUp"
 					MouseMove="canvas_drawing_MouseMove"
+					MouseUp="canvas_drawing_MouseUp"
 					>
 					<Border 
 						x:Name="border_drawing"
 						BorderBrush="Black"
 						BorderThickness="1"
-						Background="{Binding CurrActiveColor}"
+						Background="{Binding CurrActiveColor, Converter={StaticResource colorToSolidColorBrushConverter}}"
 						Opacity="0"
 					/>
 				</Canvas>

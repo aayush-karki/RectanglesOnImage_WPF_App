@@ -92,6 +92,10 @@ namespace RectanglesOnImage_WPF_App
 				deactivateToolBtn( getCurrActiveToolButton() );
 				mCurrActiveTool = value;
 				activateToolBtn( getCurrActiveToolButton() );
+
+				// colaps the canvas when not need
+				// this is done so that it does not interfare with othertools
+				canvas_drawing.Visibility = ( mCurrActiveTool == ToolEnum.Rectangle ) ? Visibility.Visible : Visibility.Collapsed;
 			}
 			get
 			{
@@ -135,12 +139,46 @@ namespace RectanglesOnImage_WPF_App
 		}
 
 		/// <summary>
-		/// Event raised when color tool button is clicked. Allows user to set the color of the rectangle.
+		/// Event raised to set the current active color to red.
 		/// </summary>
-		private void btn_colorPicker_Click( object sender , RoutedEventArgs e )
+		private void btn_colorPicker__red_Click( object sender , RoutedEventArgs e )
 		{
-
+			CurrActiveColor = Colors.Red;
 		}
+
+		/// <summary>
+		/// Event raised to set the current active color to blue.
+		/// </summary>
+		private void btn_colorPicker__blue_Click( object sender , RoutedEventArgs e )
+		{
+			CurrActiveColor = Colors.Blue;
+		}
+
+		/// <summary>
+		/// Event raised to set the current active color to green.
+		/// </summary>
+		private void btn_colorPicker__green_Click( object sender , RoutedEventArgs e )
+		{
+			CurrActiveColor = Colors.Green;
+		}
+
+
+		/// <summary>
+		/// Event raised to set the current active color to black.
+		/// </summary>
+		private void btn_colorPicker__black_Click( object sender , RoutedEventArgs e )
+		{
+			CurrActiveColor = Colors.Black;
+		}
+
+		/// <summary>
+		/// Event raised to set the current active color to white.
+		/// </summary>
+		private void btn_colorPicker__white_Click( object sender , RoutedEventArgs e )
+		{
+			CurrActiveColor = Colors.White;
+		}
+
 
 		/// <summary>
 		/// Event raised when fill tool button is clicked. Sets fill tool as active tool.
@@ -175,15 +213,34 @@ namespace RectanglesOnImage_WPF_App
 		/// </summary>
 		private void Rectangle_MouseDown( object sender , MouseButtonEventArgs e )
 		{
+			// if active tool is not hand and not fill then do nothing 
+			if( CurrentActiveTool != ToolEnum.Hand && CurrentActiveTool != ToolEnum.Fill )
+			{
+				return;
+			}
 
-		}
+			Rectangle rectangle = ( Rectangle ) sender;
+			RectangleDataModel selRectangle = ( RectangleDataModel ) rectangle.DataContext;
+			
+			// setting the selected rectangle to true
+			selRectangle.IsSelected = true;
+		
+			// for fill tool
+			if( CurrentActiveTool == ToolEnum.Fill )
+			{
+				// storing the rectangle to compare to when mouse is up
+				storedSelectedMouseDownRectangle = rectangle;
+				return;
+			}
 
-		/// <summary>
-		/// Event raised when mouse is released when the pointer is over a rectangle and mouse button is pressed down.
-		/// </summary>
-		private void Rectangle_MouseUp( object sender , MouseButtonEventArgs e )
-		{
+			// for hand tool
 
+			// setting the draging to true
+			mDragingRectangles = true;
+			mMouseStartPoint = e.GetPosition( content );
+			rectangle.CaptureMouse();
+
+			e.Handled = true;
 		}
 
 		/// <summary>
@@ -193,6 +250,38 @@ namespace RectanglesOnImage_WPF_App
 		{
 
 		}
+
+		/// <summary>
+		/// Event raised when mouse is released when the pointer is over a rectangle and mouse button is pressed down.
+		/// </summary>
+		private void Rectangle_MouseUp( object sender , MouseButtonEventArgs e )
+		{
+			// if active tool is not hand and not fill then do nothing 
+			if( CurrentActiveTool != ToolEnum.Hand && CurrentActiveTool != ToolEnum.Fill )
+			{
+				return;
+			}
+
+			Rectangle rectangle = ( Rectangle ) sender;
+			RectangleDataModel selRectangle = ( RectangleDataModel ) rectangle.DataContext;
+
+			// setting the selected rectangle to true
+			selRectangle.IsSelected = true;
+
+			// for fill tool
+			if( CurrentActiveTool == ToolEnum.Fill)
+			{
+				// checking if the mouse was release on the same selected rectangle
+				if(  storedSelectedMouseDownRectangle == rectangle )
+				{
+					rectangle.Fill = new SolidColorBrush( CurrActiveColor );
+				}
+				// storing the rectangle to compare to when mouse is up
+				storedSelectedMouseDownRectangle = rectangle;
+				return;
+			}
+		}
+
 
 		/// <summary>
 		/// Event raised when mouse is pressed down when the pointer is over a canvas_drawing.
@@ -252,6 +341,13 @@ namespace RectanglesOnImage_WPF_App
 			}
 		}
 
+		#endregion
+
+		#region Private Methods
+
+		/// <summary>
+		/// Initializes the member variables
+		/// </summary>
 		private void initializeMemberVariables()
 		{
 			CurrActiveColor = Color.FromArgb( 0xFF , 0x00 , 0x00 , 0x00 );
@@ -266,14 +362,9 @@ namespace RectanglesOnImage_WPF_App
 
 			mBorderThickness = 5;
 			mDrawingRectangles = false;
+			mDragingRectangles = false;
 			mImageLoaded = false;
-
 		}
-
-
-		#endregion
-
-		#region Private Methods
 
 		/// <summary>
 		/// Sets the passed button's foreGround and backgorund  to active colors
@@ -388,6 +479,11 @@ namespace RectanglesOnImage_WPF_App
 		private bool mDrawingRectangles;
 
 		/// <summary>
+		/// true if a rectangle is being dragged
+		/// </summary>
+		private bool mDragingRectangles;
+
+		/// <summary>
 		/// true if image is loaded in the canvas
 		/// </summary>
 		private bool mImageLoaded;
@@ -397,9 +493,16 @@ namespace RectanglesOnImage_WPF_App
 		/// </summary>
 		private Point mMouseStartPoint;
 
+		/// <summary>
+		/// stores position of drawing rectangle
+		/// </summary>
 		private Point mDrawingRectangleTopleftPos;
 
-		#endregion
+		/// <summary>
+		/// stores the selected rectangle when mouse is pressed down
+		/// </summary>
+		private Rectangle storedSelectedMouseDownRectangle;
 
+		#endregion
 	}
 }
