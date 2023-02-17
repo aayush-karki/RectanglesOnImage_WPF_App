@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 
 namespace RectanglesOnImage_WPF_App
-{ 
+{
+	/// <summary>
+	/// Indicates current selected tool
+	/// </summary>
 	public enum ToolEnum
 	{
 		// default tool, does nothing

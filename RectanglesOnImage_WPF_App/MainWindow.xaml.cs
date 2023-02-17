@@ -23,7 +23,7 @@ namespace RectanglesOnImage_WPF_App
 	/// </summary>
 	public partial class MainWindow : Window, INotifyPropertyChanged
 	{
-		#region properties
+		#region Public Properties
 		
 		public Color CurrActiveColor
 		{
@@ -56,6 +56,7 @@ namespace RectanglesOnImage_WPF_App
 				return mCurrActiveTool;
 			}
 		}
+
 		#endregion
 
 		public MainWindow()
@@ -64,6 +65,7 @@ namespace RectanglesOnImage_WPF_App
 		}
 
 		#region INotifyPropertyChanged Members
+
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
@@ -81,6 +83,12 @@ namespace RectanglesOnImage_WPF_App
 		}
 
 		#endregion
+
+		# region Private Event
+
+		/// <summary>
+		/// Event raised when load image button is clicked. Allows user to load a image file to canvas.
+		/// </summary>
 		private void btn_loadImg_Click( object sender , RoutedEventArgs e )
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -95,30 +103,49 @@ namespace RectanglesOnImage_WPF_App
 			}
 		}
 
+		/// <summary>
+		/// Event raised when save image button is clicked. Allows user to save the canvas as image file.
+		/// </summary>
 		private void btn_SaveImg_Click( object sender , RoutedEventArgs e )
 		{
 
 		}
 
+		/// <summary>
+		/// Event raised when color tool button is clicked. Allows user to set the color of the rectangle.
+		/// </summary>
 		private void btn_colorPicker_Click( object sender , RoutedEventArgs e )
 		{
 
 		}
 
+		/// <summary>
+		/// Event raised when fill tool button is clicked. Sets fill tool as active tool.
+		/// </summary>
 		private void btn_fillTool_Click( object sender , RoutedEventArgs e )
 		{
 			CurrentActiveTool = ToolEnum.Fill;
 		}
 
+		/// <summary>
+		/// Event raised when rectangle tool button is clicked. Sets rectangle tool as active tool.
+		/// </summary>
 		private void btn_rectangleTool_Click( object sender , RoutedEventArgs e )
 		{
 			CurrentActiveTool = ToolEnum.Rectangle;
 		}
 
+		/// <summary>
+		/// Event raised when hand tool button is clicked. Sets hand tool as active tool.
+		/// </summary>
 		private void btn_handTool_Click( object sender , RoutedEventArgs e )
 		{
 			CurrentActiveTool = ToolEnum.Hand;
 		}
+
+		#endregion
+
+		#region Private Methods
 
 		/// <summary>
 		/// Sets the passed button's foreGround and backgorund  to active colors
@@ -133,11 +160,11 @@ namespace RectanglesOnImage_WPF_App
 		/// <summary>
 		/// Sets the passed button's foreGround and backgorund  to indicate it is not active colors
 		/// </summary>
-		/// <param name="aButton"> Button. Button to set active</param>
+		/// <param name="aButton"> Button Button to set active</param>
 		private void deactivateToolBtn( Button aButton )
 		{
-			aButton.Foreground = mDeActiveButtonFgBrush;
-			aButton.Background = mDeActiveButtonBgBrush;
+			aButton.Foreground = mInActiveButtonFgBrush;
+			aButton.Background = mInActiveButtonBgBrush;
 		}
 
 		private Button getCurrActiveToolButton()
@@ -154,7 +181,10 @@ namespace RectanglesOnImage_WPF_App
 			return btn_handTool;
 		}
 
-		#region data members
+		#endregion
+
+		#region Private Data Members
+
 		/// <summary>
 		/// holds the current selected color
 		/// </summary>
@@ -165,10 +195,11 @@ namespace RectanglesOnImage_WPF_App
 		/// </summary>
 		private ToolEnum mCurrActiveTool = ToolEnum.Hand;
 
+		// foreground and background brushes for button when it is active or inactive
 		private Brush mActiveButtonFgBrush = Brushes.White;
 		private Brush mActiveButtonBgBrush = Brushes.Black;
-		private Brush mDeActiveButtonFgBrush = Brushes.Black;
-		private Brush mDeActiveButtonBgBrush = Brushes.LightGray;
+		private Brush mInActiveButtonFgBrush = Brushes.Black;
+		private Brush mInActiveButtonBgBrush = Brushes.LightGray;
 
 		#endregion
 
