@@ -248,7 +248,26 @@ namespace RectanglesOnImage_WPF_App
 		/// </summary>
 		private void Rectangle_MouseMove( object sender , MouseEventArgs e )
 		{
+			// mouse is goning to be moving for rectangles when it is draging the rectangles
+			if(!mDragingRectangles)
+			{
+				return;
+			}
 
+			// content is the listbox
+			Point curMousePoint = e.GetPosition( content );
+			Vector rectangleDragVector = e.GetPosition( content ) - mMouseStartPoint;
+
+
+			// update the position of the rectangle as the user drags it.
+			Rectangle rectangle = ( Rectangle ) sender;
+			RectangleDataModel selRectangle = ( RectangleDataModel ) rectangle.DataContext;
+			selRectangle.X += rectangleDragVector.X;
+			selRectangle.Y += rectangleDragVector.Y;
+			
+			mMouseStartPoint = curMousePoint;
+
+			e.Handled = true;
 		}
 
 		/// <summary>
@@ -276,10 +295,27 @@ namespace RectanglesOnImage_WPF_App
 				{
 					rectangle.Fill = new SolidColorBrush( CurrActiveColor );
 				}
-				// storing the rectangle to compare to when mouse is up
-				storedSelectedMouseDownRectangle = rectangle;
+				else
+				{
+					// unselecting the stored rectangle
+					storedSelectedMouseDownRectangle = null;
+				}
+
 				return;
 			}
+
+			// hand tool
+
+			// check if we were draging rectangles or not
+			if( !mDragingRectangles )
+			{
+				return;
+			}
+
+			mDragingRectangles = false;
+			rectangle.ReleaseMouseCapture();
+
+			e.Handled = true;
 		}
 
 

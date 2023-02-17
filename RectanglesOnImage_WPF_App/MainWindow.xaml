@@ -328,7 +328,7 @@
 				>
 				<Button.ToolTip>
 					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
-						Tool to select hand tool. It does nothing when on canvas
+						Tool move rectangles
 					</ToolTip>
 				</Button.ToolTip>
 				Hand
