@@ -64,6 +64,15 @@ namespace RectanglesOnImage_WPF_App
 			mRectangles.Add( aRectangle );
 		}
 
+		/// <summary>
+		/// Removes Rectangle to the rectangles
+		/// </summary>
+		/// <param name="aRectangle">RectangleDataModel. Rectangle to add to the data list</param>
+		public void removeRectangleToRectangles( RectangleDataModel aRectangle )
+		{
+			mRectangles.Remove( aRectangle );
+		}
+
 		#endregion
 
 		#region INotifyPropertyChanged Members

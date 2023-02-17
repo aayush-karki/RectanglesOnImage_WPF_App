@@ -135,6 +135,8 @@
 				<ColumnDefinition Width="50" />
 			</Grid.ColumnDefinitions>
 
+			
+
 			<!--button to load an image to the canvas-->
 			<Button
 				x:Name="btn_LoadImg"
@@ -180,8 +182,6 @@
 			<Button
 				x:Name="btn_colorPicker__red"
 				Grid.Column="5"
-				Grid.Row="0"
-				Grid.RowSpan="3"
 				Margin="5"
 				Cursor="Hand"
 				Click="btn_colorPicker__red_Click"
@@ -199,8 +199,6 @@
 			<Button
 				x:Name="btn_colorPicker__green"
 				Grid.Column="6"
-				Grid.Row="0"
-				Grid.RowSpan="3"
 				Margin="5"
 				Cursor="Hand"
 				Click="btn_colorPicker__green_Click"
@@ -218,8 +216,6 @@
 			<Button
 				x:Name="btn_colorPicker__blue"
 				Grid.Column="7"
-				Grid.Row="0"
-				Grid.RowSpan="3"
 				Margin="5"
 				Cursor="Hand"
 				Click="btn_colorPicker__blue_Click"
@@ -237,8 +233,6 @@
 			<Button
 				x:Name="btn_colorPicker__black"
 				Grid.Column="8"
-				Grid.Row="0"
-				Grid.RowSpan="3"
 				Margin="5"
 				Cursor="Hand"
 				Click="btn_colorPicker__black_Click"
@@ -256,8 +250,6 @@
 			<Button
 				x:Name="btn_colorPicker__white"
 				Grid.Column="9"
-				Grid.Row="0"
-				Grid.RowSpan="3"
 				Margin="5"
 				Cursor="Hand"
 				Click="btn_colorPicker__white_Click"
@@ -328,10 +320,27 @@
 				>
 				<Button.ToolTip>
 					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
-						Tool move rectangles
+						Tool to move rectangles
 					</ToolTip>
 				</Button.ToolTip>
 				Hand
+			</Button>
+
+			<Button
+			x:Name="btn_deleteTool"
+			Grid.Column="3"
+			Margin="5"
+			Cursor="Hand"
+			Click="btn_deleteTool_Click"
+			Background="Black"
+			Foreground="White"
+			>
+				<Button.ToolTip>
+					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
+						Delete selected rectangle
+					</ToolTip>
+				</Button.ToolTip>
+				Delete
 			</Button>
 		</Grid>
 

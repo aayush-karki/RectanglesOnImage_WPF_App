@@ -96,6 +96,12 @@ namespace RectanglesOnImage_WPF_App
 				// colaps the canvas when not need
 				// this is done so that it does not interfare with othertools
 				canvas_drawing.Visibility = ( mCurrActiveTool == ToolEnum.Rectangle ) ? Visibility.Visible : Visibility.Collapsed;
+
+				// on tool change removing any saved rectangle
+				if( storedSelectedMouseDownRectangle != null)
+				{
+					deselectStoredRectangle();
+				}
 			}
 			get
 			{
@@ -224,15 +230,18 @@ namespace RectanglesOnImage_WPF_App
 			
 			// setting the selected rectangle to true
 			selRectangle.IsSelected = true;
-		
+
+			// storing the rectangleDataModel to compare to when mouse is up
+			// used by both hand and fill tool. 
+			// in case of hand tool it is used to delete the rectangles
+			storedSelectedMouseDownRectangle = selRectangle;
+			
 			// for fill tool
 			if( CurrentActiveTool == ToolEnum.Fill )
 			{
-				// storing the rectangle to compare to when mouse is up
-				storedSelectedMouseDownRectangle = rectangle;
 				return;
 			}
-
+			
 			// for hand tool
 
 			// setting the draging to true
@@ -275,49 +284,57 @@ namespace RectanglesOnImage_WPF_App
 		/// </summary>
 		private void Rectangle_MouseUp( object sender , MouseButtonEventArgs e )
 		{
-			// if active tool is not hand and not fill then do nothing 
-			if( CurrentActiveTool != ToolEnum.Hand && CurrentActiveTool != ToolEnum.Fill )
+			// if active tool is hand or fill then do nothing 
+			if( CurrentActiveTool == ToolEnum.Hand || CurrentActiveTool == ToolEnum.Fill )
 			{
-				return;
-			}
+				Rectangle rectangle = ( Rectangle ) sender;
+				RectangleDataModel selRectangle = ( RectangleDataModel ) rectangle.DataContext;
 
-			Rectangle rectangle = ( Rectangle ) sender;
-			RectangleDataModel selRectangle = ( RectangleDataModel ) rectangle.DataContext;
+				// setting the selected rectangle to true
+				selRectangle.IsSelected = true;
 
-			// setting the selected rectangle to true
-			selRectangle.IsSelected = true;
-
-			// for fill tool
-			if( CurrentActiveTool == ToolEnum.Fill)
-			{
-				// checking if the mouse was release on the same selected rectangle
-				if(  storedSelectedMouseDownRectangle == rectangle )
+				// for fill tool
+				if( storedSelectedMouseDownRectangle != selRectangle )
+				{
+					deselectStoredRectangle();
+				}
+				if( CurrentActiveTool == ToolEnum.Fill )
 				{
 					rectangle.Fill = new SolidColorBrush( CurrActiveColor );
+					
 				}
-				else
+				// hand tool and if it is draggin
+				else if( CurrentActiveTool == ToolEnum.Hand )
 				{
-					// unselecting the stored rectangle
-					storedSelectedMouseDownRectangle = null;
+					// check if we were draging rectangles or not
+					if( mDragingRectangles )
+					{
+						mDragingRectangles = false;
+						rectangle.ReleaseMouseCapture();
+					}
+
+					if( storedSelectedMouseDownRectangle != null )
+					{
+						btn_deleteTool.Visibility = Visibility.Visible;
+					}
 				}
-
-				return;
 			}
-
-			// hand tool
-
-			// check if we were draging rectangles or not
-			if( !mDragingRectangles )
-			{
-				return;
-			}
-
-			mDragingRectangles = false;
-			rectangle.ReleaseMouseCapture();
 
 			e.Handled = true;
 		}
 
+		/// <summary>
+		/// Event raised when delete button is clicked. Deletes selected rectangle
+		/// </summary>
+		private void btn_deleteTool_Click( object sender , RoutedEventArgs e )
+		{
+			if( storedSelectedMouseDownRectangle != null)
+			{
+				RectangleData.RectangleDataInstance.removeRectangleToRectangles( storedSelectedMouseDownRectangle );
+			}
+
+			deselectStoredRectangle();
+		}
 
 		/// <summary>
 		/// Event raised when mouse is pressed down when the pointer is over a canvas_drawing.
@@ -376,6 +393,7 @@ namespace RectanglesOnImage_WPF_App
 				mDrawingRectangles = false;
 			}
 		}
+
 
 		#endregion
 
@@ -479,6 +497,21 @@ namespace RectanglesOnImage_WPF_App
 			border_drawing.Height = height;
 		}
 
+		/// <summary>
+		/// deselectes the stored rectangle selection
+		/// </summary>
+		private void deselectStoredRectangle()
+		{
+			if( storedSelectedMouseDownRectangle == null)
+			{
+				return;
+			}
+
+			storedSelectedMouseDownRectangle.IsSelected = false;
+			storedSelectedMouseDownRectangle = null;
+			btn_deleteTool.Visibility = Visibility.Collapsed;
+		}
+
 		#endregion
 
 		#region Private Data Members
@@ -537,8 +570,9 @@ namespace RectanglesOnImage_WPF_App
 		/// <summary>
 		/// stores the selected rectangle when mouse is pressed down
 		/// </summary>
-		private Rectangle storedSelectedMouseDownRectangle;
+		private RectangleDataModel storedSelectedMouseDownRectangle;
 
 		#endregion
+
 	}
 }
