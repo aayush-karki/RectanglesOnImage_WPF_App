@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -25,11 +26,16 @@ namespace RectanglesOnImage_WPF_App
 	{
 		#region Public Properties
 		
+		/// <summary>
+		/// Current active color
+		/// </summary>
 		public Color CurrActiveColor
 		{
 			set
 			{
 				mCurrActiveColor = value;
+
+				OnPropertyChanged( "CurrActiveColor" );
 			}
 			get
 			{
@@ -37,31 +43,15 @@ namespace RectanglesOnImage_WPF_App
 			}
 		}
 
-		private ToolEnum CurrentActiveTool
-		{
-			set
-			{
-				if ( mCurrActiveTool == value)
-				{
-					return;
-				}
-
-				// deactive curr tool, save new tool, activate new tool
-				deactivateToolBtn( getCurrActiveToolButton());
-				mCurrActiveTool = value;
-				activateToolBtn( getCurrActiveToolButton());
-			}
-			get
-			{
-				return mCurrActiveTool;
-			}
-		}
 
 		#endregion
 
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			// Initializing member variables
+			initializeMemberVariables();
 		}
 
 		#region INotifyPropertyChanged Members
@@ -84,7 +74,34 @@ namespace RectanglesOnImage_WPF_App
 
 		#endregion
 
-		# region Private Event
+		#region Private Properties
+
+		/// <summary>
+		/// Current Active Tool
+		/// </summary>
+		private ToolEnum CurrentActiveTool
+		{
+			set
+			{
+				if( mCurrActiveTool == value )
+				{
+					return;
+				}
+
+				// deactive curr tool, save new tool, activate new tool
+				deactivateToolBtn( getCurrActiveToolButton() );
+				mCurrActiveTool = value;
+				activateToolBtn( getCurrActiveToolButton() );
+			}
+			get
+			{
+				return mCurrActiveTool;
+			}
+		}
+
+		#endregion
+
+		#region Private Events
 
 		/// <summary>
 		/// Event raised when load image button is clicked. Allows user to load a image file to canvas.
@@ -94,12 +111,18 @@ namespace RectanglesOnImage_WPF_App
 			OpenFileDialog openFileDialog = new OpenFileDialog();
 			openFileDialog.Filter = "Image|*.jpg;*.jpeg;*png";
 
-			if( openFileDialog.ShowDialog() == true)
+			if( openFileDialog.ShowDialog() == true )
 			{
-				BitmapImage bgImage = new BitmapImage( new Uri( ( string ) openFileDialog.FileName ) );
-				bgImageBrush.ImageSource = bgImage;
-				//btm.Save( openFileDialog.FileName , ImageFormat.Jpeg );
-				//MessageBox.Show( "Image Saved Successfully..." );
+				// loading the selecting image
+				mBgImage = new BitmapImage( new Uri( ( string ) openFileDialog.FileName ) );
+				img_bgImage.Source = mBgImage;
+
+				// drawing a border around the image
+				rec_imgBorder.Width = mBgImage.Width + mBorderThickness;
+				rec_imgBorder.Height = mBgImage.Height + mBorderThickness;
+
+				// image has been loaded
+				mImageLoaded = true;
 			}
 		}
 
@@ -132,7 +155,11 @@ namespace RectanglesOnImage_WPF_App
 		/// </summary>
 		private void btn_rectangleTool_Click( object sender , RoutedEventArgs e )
 		{
-			CurrentActiveTool = ToolEnum.Rectangle;
+			// only allow to select rectangle tool if image is loaded 
+			if(mImageLoaded)
+			{
+				CurrentActiveTool = ToolEnum.Rectangle;
+			}
 		}
 
 		/// <summary>
@@ -142,6 +169,107 @@ namespace RectanglesOnImage_WPF_App
 		{
 			CurrentActiveTool = ToolEnum.Hand;
 		}
+
+		/// <summary>
+		/// Event raised when mouse is pressed down when the pointer is over a rectangle.
+		/// </summary>
+		private void Rectangle_MouseDown( object sender , MouseButtonEventArgs e )
+		{
+
+		}
+
+		/// <summary>
+		/// Event raised when mouse is released when the pointer is over a rectangle and mouse button is pressed down.
+		/// </summary>
+		private void Rectangle_MouseUp( object sender , MouseButtonEventArgs e )
+		{
+
+		}
+
+		/// <summary>
+		/// Event raised when mouse is moved when the pointer is over a rectangle and the mouse is pressed down.
+		/// </summary>
+		private void Rectangle_MouseMove( object sender , MouseEventArgs e )
+		{
+
+		}
+
+		/// <summary>
+		/// Event raised when mouse is pressed down when the pointer is over a canvas_drawing.
+		/// </summary>
+		private void canvas_drawing_MouseDown( object sender , MouseButtonEventArgs e )
+		{
+			// only do its thing if current tool is rectangle tool
+			if( mCurrActiveTool != ToolEnum.Rectangle )
+			{
+				return;
+			}
+
+			// checking if the mouse is out of image area
+			bool pointerInValidRegion = e.GetPosition( rec_imgBorder ).X > mBorderThickness / 2
+				&& e.GetPosition( rec_imgBorder ).X < rec_imgBorder.Width - mBorderThickness / 2
+				&& e.GetPosition( rec_imgBorder ).Y > mBorderThickness / 2
+				&& e.GetPosition( rec_imgBorder ).Y < rec_imgBorder.Height - mBorderThickness / 2;
+
+			if( !pointerInValidRegion )
+			{
+				return;
+			}
+
+			// save the current postion and initiaing drawing rectangle
+			mMouseStartPoint = e.GetPosition(canvas_drawing);
+			mDrawingRectangles = true;
+		}
+
+		/// <summary>
+		/// Event raised when mouse is moved when the pointer is over a canvas_drawing and the mouse is pressed down.
+		/// </summary>
+		private void canvas_drawing_MouseMove( object sender , MouseEventArgs e )
+		{
+			// checking if rectangle tool is selected and rectangle is being drawn
+			if( mCurrActiveTool == ToolEnum.Rectangle && mDrawingRectangles)
+			{
+				// save the current postion and initiaing drawing rectangles
+				border_drawing.Opacity = 0.75;
+				initborder_drawing( mMouseStartPoint , e.GetPosition( canvas_drawing ) );
+			}
+		}
+
+		/// <summary>
+		/// Event raised when mouse is released when the pointer is over a canvas_drawing and mouse button is pressed down.
+		/// </summary>
+		private void canvas_drawing_MouseUp( object sender , MouseButtonEventArgs e )
+		{
+			// checking if rectangle tool is selected and rectangle is being drawn
+			if( mCurrActiveTool == ToolEnum.Rectangle && mDrawingRectangles )
+			{
+				// create a rectangle based on border
+				RectangleData.RectangleDataInstance.addRectangleToRectangles( new RectangleDataModel( mDrawingRectangleTopleftPos.X , mDrawingRectangleTopleftPos.Y , border_drawing.Width , border_drawing.Height , mCurrActiveColor , false ) );
+
+				// hiding the drawing border and leaving the drawing mode
+				border_drawing.Opacity = 0;
+				mDrawingRectangles = false;
+			}
+		}
+
+		private void initializeMemberVariables()
+		{
+			CurrActiveColor = Color.FromArgb( 0xFF , 0x00 , 0x00 , 0x00 );
+
+			CurrentActiveTool = ToolEnum.Hand;
+
+			// foreground and background brushes for button when it is active or inactive
+			mActiveButtonFgBrush = Brushes.White;
+			mActiveButtonBgBrush = Brushes.Black;
+			mInActiveButtonFgBrush = Brushes.Black;
+			mInActiveButtonBgBrush = Brushes.LightGray;
+
+			mBorderThickness = 5;
+			mDrawingRectangles = false;
+			mImageLoaded = false;
+
+		}
+
 
 		#endregion
 
@@ -167,6 +295,10 @@ namespace RectanglesOnImage_WPF_App
 			aButton.Background = mInActiveButtonBgBrush;
 		}
 
+		/// <summary>
+		/// Gets the reference to the current active tool button
+		/// </summary>
+		/// <returns>Button. reference to the current active tool button</returns>
 		private Button getCurrActiveToolButton()
 		{
 			if(CurrentActiveTool == ToolEnum.Rectangle)
@@ -181,6 +313,45 @@ namespace RectanglesOnImage_WPF_App
 			return btn_handTool;
 		}
 
+		/// <summary>
+		/// Update the position and size of the rectangle that user is dragging out.
+		/// </summary>
+		private void initborder_drawing( Point aOrginalPoint , Point aNewPoint )
+		{
+			double width;
+			double height;
+
+			// Deterine x, y, width and height of the rectangle
+			// if the new point is left or top of the orginal point then invert the rectangle
+			if( aNewPoint.X < aOrginalPoint.X )
+			{
+				mDrawingRectangleTopleftPos.X = aNewPoint.X;
+				width = aOrginalPoint.X - aNewPoint.X;
+			}
+			else
+			{
+				mDrawingRectangleTopleftPos.X = aOrginalPoint.X;
+				width = aNewPoint.X - aOrginalPoint.X;
+			}
+
+			if( aNewPoint.Y < aOrginalPoint.Y )
+			{
+				mDrawingRectangleTopleftPos.Y = aNewPoint.Y;
+				height = aOrginalPoint.Y - aNewPoint.Y;
+			}
+			else
+			{
+				mDrawingRectangleTopleftPos.Y = aOrginalPoint.Y;
+				height = aNewPoint.Y - aOrginalPoint.Y;
+			}
+
+			// Update the coordinates of the rectangle that is being dragged out by the user.
+			Canvas.SetLeft( border_drawing , mDrawingRectangleTopleftPos.X );
+			Canvas.SetTop( border_drawing , mDrawingRectangleTopleftPos.Y );
+			border_drawing.Width = width;
+			border_drawing.Height = height;
+		}
+
 		#endregion
 
 		#region Private Data Members
@@ -188,18 +359,45 @@ namespace RectanglesOnImage_WPF_App
 		/// <summary>
 		/// holds the current selected color
 		/// </summary>
-		private Color mCurrActiveColor = Color.FromArgb( 0xFF, 0x00, 0x00, 0x00);
+		private Color mCurrActiveColor;
 
 		/// <summary>
 		/// current active tool
 		/// </summary>
-		private ToolEnum mCurrActiveTool = ToolEnum.Hand;
+		private ToolEnum mCurrActiveTool;
 
 		// foreground and background brushes for button when it is active or inactive
-		private Brush mActiveButtonFgBrush = Brushes.White;
-		private Brush mActiveButtonBgBrush = Brushes.Black;
-		private Brush mInActiveButtonFgBrush = Brushes.Black;
-		private Brush mInActiveButtonBgBrush = Brushes.LightGray;
+		private Brush mActiveButtonFgBrush;
+		private Brush mActiveButtonBgBrush;
+		private Brush mInActiveButtonFgBrush;
+		private Brush mInActiveButtonBgBrush;
+
+		/// <summary>
+		/// holds the image uploaded by user
+		/// </summary>
+		private BitmapImage mBgImage;
+
+		/// <summary>
+		/// Thickness of the border
+		/// </summary>
+		private double mBorderThickness;
+
+		/// <summary>
+		/// true if a rectangle is being drawn
+		/// </summary>
+		private bool mDrawingRectangles;
+
+		/// <summary>
+		/// true if image is loaded in the canvas
+		/// </summary>
+		private bool mImageLoaded;
+
+		/// <summary>
+		/// starting  position of the mouse
+		/// </summary>
+		private Point mMouseStartPoint;
+
+		private Point mDrawingRectangleTopleftPos;
 
 		#endregion
 

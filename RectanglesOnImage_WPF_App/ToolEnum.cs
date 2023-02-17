@@ -13,7 +13,7 @@ namespace RectanglesOnImage_WPF_App
 	/// </summary>
 	public enum ToolEnum
 	{
-		// default tool, does nothing
+		// default tool, move and resize rectangle
 		Hand,
 
 		// when this tool is selected and a rectangle is pressed then changes the color of the rectangle

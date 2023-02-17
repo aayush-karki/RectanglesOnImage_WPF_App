@@ -1,1 +1,4 @@
 https://stackoverflow.com/questions/29650471/how-do-i-set-background-image-to-a-canvas
+
+
+https://www.codeproject.com/Questions/1096881/How-to-bind-code-behind-variables-in-WPF

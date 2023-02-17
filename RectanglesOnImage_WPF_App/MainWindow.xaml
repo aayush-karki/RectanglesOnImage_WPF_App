@@ -1,27 +1,116 @@
-﻿<Window x:Class="RectanglesOnImage_WPF_App.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RectanglesOnImage_WPF_App"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-		DataContext="{Binding RelativeSource={RelativeSource self}}"
-		>
-    <DockPanel>
+﻿<Window 
+	x:Class="RectanglesOnImage_WPF_App.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:local="clr-namespace:RectanglesOnImage_WPF_App"
+	mc:Ignorable="d"
+	Title="MainWindow" Height="450" Width="800"
+	DataContext="{Binding RelativeSource={RelativeSource self}}"
+	>
+
+	<Window.Resources>
+		<!-- Converts a color value to a solid color brush.-->
+		<local:ColorToSolidColorBrushConverter x:Key="colorToSolidColorBrushConverter" />
+
+		<!-- Defines how a RectaguleViewModel should be rendered -->
+		<DataTemplate DataType="{x:Type local:RectangleDataModel}">
+			<Rectangle
+				Width="{Binding Width}"
+				Height="{Binding Height}"
+				Fill="{Binding Color, Converter={StaticResource colorToSolidColorBrushConverter}}"
+				Cursor="Hand"
+				MouseDown="Rectangle_MouseDown"
+				MouseUp="Rectangle_MouseUp"
+				MouseMove="Rectangle_MouseMove"
+				/>
+		</DataTemplate>
+
+		<!-- 
+        Override the style of the ListBox to remove the ScrollViewer.
+        All we want is ListBox logic but based on a Canvas.
+        -->
+		<Style x:Key="noScrollViewerListBoxStyle" TargetType="ListBox">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ListBox">
+						<Canvas 
+							Background="{TemplateBinding Background}"
+							IsItemsHost="True" 
+						/>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- 
+        Override the style of each ListBoxItem to bind Canvas.Left, Canvas.Top and IsSelected.
+        -->
+		<Style 
+            x:Key="listBoxItemStyle" 
+            TargetType="ListBoxItem"
+            >
+			<Setter 
+				Property="Canvas.Left" 
+				Value="{Binding X}" 
+			/>
+			<Setter 
+				Property="Canvas.Top" 
+				Value="{Binding Y}" 
+			/>
+			<Setter 
+				Property="IsSelected" 
+				Value="{Binding IsSelected}" 
+			/>
+
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ListBoxItem">
+						<!--
+						This border is used for indicating selection.
+						Normally it is transparent, when the item is selected the border is set to blue.
+						-->
+						<Border 
+							Name="Border"
+							BorderThickness="1"
+							Padding="2"
+							>
+							<ContentPresenter />
+						</Border>
+						<ControlTemplate.Triggers>
+							<!--
+							When the ListBoxItem is selected draw a simple blue border around it.
+							-->
+							<Trigger Property="IsSelected" Value="true">
+								<Setter 
+									TargetName="Border" 
+									Property="BorderBrush"
+									Value="Blue"
+								/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Resources>
+
+	<DockPanel>
 		<Grid 
-            Margin="4"
-            DockPanel.Dock="Top">
+			Margin="4"
+			DockPanel.Dock="Top"
+			>
 			<Grid.ColumnDefinitions>
-                <!--image load btn-->
+				<!--image load btn-->
 				<ColumnDefinition  Width="100" />
 				<!-- Save image btn-->
 				<ColumnDefinition  Width="100" />
-				
+
 				<!--middle emptyof the space-->
-                <ColumnDefinition Width="*" />
-				
-                <!--current picked color -->
+				<ColumnDefinition Width="*" />
+
+				<!--current picked color -->
 				<ColumnDefinition Width="50" />
 				<!--color picker-->
 				<ColumnDefinition Width="50" />
@@ -33,36 +122,36 @@
 				<ColumnDefinition Width="50" />
 			</Grid.ColumnDefinitions>
 
-            <!--button to load an image to the canvas-->
+			<!--button to load an image to the canvas-->
 			<Button
-                x:Name="btn_LoadImg"
-                Grid.Column="0"
-                Margin="5"
-                Click="btn_loadImg_Click"
+				x:Name="btn_LoadImg"
+				Grid.Column="0"
+				Margin="5"
+				Click="btn_loadImg_Click"
 				Background="LightGray"
 				Foreground="Black"
-            >
-                load Image
-            </Button>
+				>
+				load Image
+			</Button>
 
-            <!--button to save the current image-->
+			<!--button to save the current image-->
 			<Button
-                x:Name="btn_SaveImg"
-                Grid.Column="1"
-                Margin="5"
-                Click="btn_SaveImg_Click"
+				x:Name="btn_SaveImg"
+				Grid.Column="1"
+				Margin="5"
+				Click="btn_SaveImg_Click"
 				Background="LightGray"
 				Foreground="Black"
-            >
+				>
 				Save Image
 			</Button>
 
 			<!--show current selected color-->
 			<Rectangle
-                x:Name="btn_CurrPickedColor"
-                Grid.Column="3"
-                Margin="5"
-			>
+				x:Name="btn_CurrPickedColor"
+				Grid.Column="3"
+				Margin="5"
+				>
 				<Rectangle.Fill>
 					<SolidColorBrush Color="{Binding CurrActiveColor}"/>
 				</Rectangle.Fill>
@@ -71,16 +160,16 @@
 
 			<!--button to pick a color -->
 			<Button
-                x:Name="btn_colorPicker"
-                Grid.Column="4"
-                Margin="5"
-                Click="btn_colorPicker_Click"
+				x:Name="btn_colorPicker"
+				Grid.Column="4"
+				Margin="5"
+				Click="btn_colorPicker_Click"
 				Background="LightGray"
 				Foreground="Black"
-			>
+				>
 				<Button.ToolTip>
 					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
-						Tool to chose current active color 
+						Tool to chose current active color
 					</ToolTip>
 				</Button.ToolTip>
 				<!--<Image Source="pack://application:,,,/resources/icons/color.png"/>-->
@@ -89,15 +178,19 @@
 
 			<!--button to change the color when a rectangle is selected-->
 			<Button
-                x:Name="btn_fillTool"
-                Grid.Column="5"
-                Margin="5"
-                Click="btn_fillTool_Click"
+				x:Name="btn_fillTool"
+				Grid.Column="5"
+				Margin="5"
+				Click="btn_fillTool_Click"
 				Background="LightGray"
 				Foreground="Black"
-			>
+				>
 				<Button.ToolTip>
-					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
+					<ToolTip 
+						Placement="MousePoint" 
+						StaysOpen="True" 
+						IsOpen="false"
+						>
 						Tool to change the color of the rectangles to the selected color
 					</ToolTip>
 				</Button.ToolTip>
@@ -107,15 +200,19 @@
 
 			<!--button to change the color when a rectangle is selected-->
 			<Button
-                x:Name="btn_rectangleTool"
-                Grid.Column="6"
-                Margin="5"
-                Click="btn_rectangleTool_Click"
+				x:Name="btn_rectangleTool"
+				Grid.Column="6"
+				Margin="5"
+				Click="btn_rectangleTool_Click"
 				Background="LightGray"
 				Foreground="Black"
-			>
+				>
 				<Button.ToolTip>
-					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
+					<ToolTip 
+						Placement="MousePoint" 
+						StaysOpen="True" 
+						IsOpen="false"
+					>
 						Tool to draw a rectangle
 					</ToolTip>
 				</Button.ToolTip>
@@ -123,14 +220,15 @@
 			</Button>
 
 			<!--button to change the color when a rectangle is selected-->
+			<!--selected by default-->
 			<Button
-                x:Name="btn_handTool"
-                Grid.Column="7"
-                Margin="5"
-                Click="btn_handTool_Click"
-				Background="LightGray"
-				Foreground="Black"
-			>
+				x:Name="btn_handTool"
+				Grid.Column="7"
+				Margin="5"
+				Click="btn_handTool_Click"
+				Background="Black"
+				Foreground="White"
+				>
 				<Button.ToolTip>
 					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
 						Tool to select hand tool. It does nothing when on canvas
@@ -138,19 +236,52 @@
 				</Button.ToolTip>
 				Hand
 			</Button>
-			<!--hand tool--><!--
-			<ColumnDefinition Width="50" />
-			-->
 		</Grid>
 
-        <!--contains the image that the user uploads and allows user to draw rectangle-->
-		<Canvas
-            x:Name="content"
-        >
-			<Canvas.Background>
-				<ImageBrush x:Name="bgImageBrush"/>
-			</Canvas.Background>
-		</Canvas>
+		<ScrollViewer
+			x:Name="sv_scroller"
+			CanContentScroll="True"
+			VerticalScrollBarVisibility="Visible"
+			HorizontalScrollBarVisibility="Visible"
+			>
+			<Grid>
+				<!--border for image, hiden by default-->
+				<Rectangle
+					x:Name="rec_imgBorder"
+					Stroke="Black"
+					StrokeThickness="5"
+					Fill="Gray"
+				/>
 
+				<Image x:Name="img_bgImage" Stretch="None" />
+
+				<!-- listbox is the place where the rectangle are drawn to. -->
+				<ListBox
+					x:Name="content"
+					Background="Transparent"
+					ItemsSource="{Binding Source={x:Static local:RectangleData.RectangleDataInstance}, Path=Rectangles}"
+					Style="{StaticResource noScrollViewerListBoxStyle}"
+					ItemContainerStyle="{StaticResource listBoxItemStyle}"
+				/>
+
+				<!--Canvas is being used to "draw" the rectangle and to know the valid area that the rectangle can be drawn on-->
+				<!--TODO bind the canvas height and width to the bg image-->
+				<Canvas 
+					x:Name="canvas_drawing"
+					Background="Transparent"
+					MouseDown="canvas_drawing_MouseDown"
+					MouseUp="canvas_drawing_MouseUp"
+					MouseMove="canvas_drawing_MouseMove"
+					>
+					<Border 
+						x:Name="border_drawing"
+						BorderBrush="Black"
+						BorderThickness="1"
+						Background="{Binding CurrActiveColor}"
+						Opacity="0"
+					/>
+				</Canvas>
+			</Grid>
+		</ScrollViewer>
 	</DockPanel>
 </Window>
