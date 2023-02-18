@@ -6,7 +6,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:local="clr-namespace:RectanglesOnImage_WPF_App"
 	mc:Ignorable="d"
-	Title="MainWindow" Height="450" Width="800"
+	Title="Rectangle On Images -- WPF" Height="450" Width="800"
 	DataContext="{Binding RelativeSource={RelativeSource self}}"
 	>
 
@@ -27,10 +27,8 @@
 				/>
 		</DataTemplate>
 
-		<!-- 
-        Override the style of the ListBox to remove the ScrollViewer.
-        All we want is ListBox logic but based on a Canvas.
-        -->
+		<!-- Override the style of the ListBox to remove the ScrollViewer.
+			All we want is ListBox logic but based on a Canvas.-->
 		<Style x:Key="noScrollViewerListBoxStyle" TargetType="ListBox">
 			<Setter Property="Template">
 				<Setter.Value>
@@ -44,13 +42,11 @@
 			</Setter>
 		</Style>
 
-		<!-- 
-        Override the style of each ListBoxItem to bind Canvas.Left, Canvas.Top and IsSelected.
-        -->
+		<!-- Override the style of each ListBoxItem to bind Canvas.Left, Canvas.Top and IsSelected.-->
 		<Style 
-            x:Key="listBoxItemStyle" 
-            TargetType="ListBoxItem"
-            >
+			x:Key="listBoxItemStyle" 
+			TargetType="ListBoxItem"
+			>
 			<Setter 
 				Property="Canvas.Left" 
 				Value="{Binding X}" 
@@ -67,10 +63,7 @@
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="ListBoxItem">
-						<!--
-						This border is used for indicating selection.
-						Normally it is transparent, when the item is selected the border is set to blue.
-						-->
+						<!-- border to indicate selection.-->
 						<Border 
 							Name="Border"
 							BorderThickness="1"
@@ -79,9 +72,7 @@
 							<ContentPresenter />
 						</Border>
 						<ControlTemplate.Triggers>
-							<!--
-							When the ListBoxItem is selected draw a simple blue border around it.
-							-->
+							<!-- When the ListBoxItem is selected draw a simple blue border around it. -->
 							<Trigger Property="IsSelected" Value="true">
 								<Setter 
 									TargetName="Border" 
@@ -135,8 +126,6 @@
 				<ColumnDefinition Width="50" />
 			</Grid.ColumnDefinitions>
 
-
-
 			<!--button to load an image to the canvas-->
 			<Button
 				x:Name="btn_LoadImg"
@@ -167,6 +156,8 @@
 			<Rectangle
 				x:Name="btn_CurrPickedColor"
 				Grid.Column="3"
+				Stroke="Black"
+				StrokeThickness="2"
 				Margin="5"
 				>
 				<Rectangle.Fill>
@@ -174,9 +165,7 @@
 				</Rectangle.Fill>
 			</Rectangle>
 
-
 			<!--buttons to pick a color -->
-
 
 			<!--red color-->
 			<Button
@@ -192,7 +181,6 @@
 						Set red as the active color.
 					</ToolTip>
 				</Button.ToolTip>
-				<!--adding a image from code behind-->
 			</Button>
 
 			<!--green color-->
@@ -209,7 +197,6 @@
 						Set yellow as the active color.
 					</ToolTip>
 				</Button.ToolTip>
-				<!--adding a image from code behind-->
 			</Button>
 
 			<!--blue color-->
@@ -226,7 +213,6 @@
 						Set blue as the active color.
 					</ToolTip>
 				</Button.ToolTip>
-				<!--adding a image from code behind-->
 			</Button>
 
 			<!--black color-->
@@ -243,7 +229,6 @@
 						Set black as the active color.
 					</ToolTip>
 				</Button.ToolTip>
-				<!--adding a image from code behind-->
 			</Button>
 
 			<!--white color-->
@@ -260,7 +245,6 @@
 						Set white as the active color.
 					</ToolTip>
 				</Button.ToolTip>
-				<!--adding a image from code behind-->
 			</Button>
 
 			<!--button to change the color when a rectangle is selected-->
@@ -327,15 +311,15 @@
 			</Button>
 
 			<Button
-			x:Name="btn_deleteTool"
-			Grid.Column="3"
-			Margin="5"
-			Cursor="Hand"
-			Click="btn_deleteTool_Click"
-			Visibility="Collapsed"
-			Background="LightGray"
+				x:Name="btn_deleteTool"
+				Grid.Column="3"
+				Margin="5"
+				Cursor="Hand"
+				Click="btn_deleteTool_Click"
+				Visibility="Collapsed"
+				Background="LightGray"
 				Foreground="Black"
-			>
+				>
 				<Button.ToolTip>
 					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
 						Delete selected rectangle
@@ -356,6 +340,7 @@
 					<ColumnDefinition Width="386*"/>
 					<ColumnDefinition Width="389*"/>
 				</Grid.ColumnDefinitions>
+
 				<!--border for image, hiden by default-->
 				<Rectangle
 					x:Name="rec_imgBorder"
@@ -376,7 +361,6 @@
 				/>
 
 				<!--Canvas is being used to "draw" the rectangle and to know the valid area that the rectangle can be drawn on-->
-				<!--TODO bind the canvas height and width to the bg image-->
 				<Canvas 
 					x:Name="canvas_drawing"
 					Background="Transparent"

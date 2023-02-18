@@ -73,8 +73,6 @@ namespace RectanglesOnImage_WPF_App
 			mRectangles.Remove( aRectangle );
 		}
 
-		
-
 		#endregion
 
 		#region INotifyPropertyChanged Members
@@ -109,7 +107,6 @@ namespace RectanglesOnImage_WPF_App
 		/// </summary>
 		private static RectangleData mRectangleDataInstance = new RectangleData();
 
-		
 		#endregion
 	}
 }

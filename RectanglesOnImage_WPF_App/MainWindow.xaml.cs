@@ -437,7 +437,6 @@ namespace RectanglesOnImage_WPF_App
 			}
 		}
 
-
 		#endregion
 
 		#region Private Methods

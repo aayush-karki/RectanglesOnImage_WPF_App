@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-
 namespace RectanglesOnImage_WPF_App
 {
 	/// <summary>

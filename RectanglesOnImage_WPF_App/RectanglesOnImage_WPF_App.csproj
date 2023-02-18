@@ -95,7 +95,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="resources\icons\illustration-color-swatch\36954.eps" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -104,13 +103,6 @@
     <Resource Include="resources\2100_1500.png" />
     <Resource Include="resources\500_500.png" />
     <Resource Include="resources\references.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\icons\illustration-color-swatch\36954.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resources\icons\illustration-color-swatch\License free.txt" />
-    <Resource Include="resources\icons\illustration-color-swatch\License premium.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
