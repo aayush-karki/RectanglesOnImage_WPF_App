@@ -135,7 +135,7 @@
 				<ColumnDefinition Width="50" />
 			</Grid.ColumnDefinitions>
 
-			
+
 
 			<!--button to load an image to the canvas-->
 			<Button
@@ -332,8 +332,9 @@
 			Margin="5"
 			Cursor="Hand"
 			Click="btn_deleteTool_Click"
-			Background="Black"
-			Foreground="White"
+			Visibility="Collapsed"
+			Background="LightGray"
+				Foreground="Black"
 			>
 				<Button.ToolTip>
 					<ToolTip Placement="MousePoint" StaysOpen="True" IsOpen="false">
@@ -351,15 +352,19 @@
 			HorizontalScrollBarVisibility="Visible"
 			>
 			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="386*"/>
+					<ColumnDefinition Width="389*"/>
+				</Grid.ColumnDefinitions>
 				<!--border for image, hiden by default-->
 				<Rectangle
 					x:Name="rec_imgBorder"
 					Stroke="Black"
 					StrokeThickness="5"
-					Fill="Gray"
+					Fill="Gray" Grid.ColumnSpan="2"
 				/>
 
-				<Image x:Name="img_bgImage" Stretch="None" />
+				<Image x:Name="img_bgImage" Stretch="None" Grid.ColumnSpan="2" />
 
 				<!-- listbox is the place where the rectangle are drawn to. -->
 				<ListBox
@@ -367,7 +372,7 @@
 					Background="Transparent"
 					ItemsSource="{Binding Source={x:Static local:RectangleData.RectangleDataInstance}, Path=Rectangles}"
 					Style="{StaticResource noScrollViewerListBoxStyle}"
-					ItemContainerStyle="{StaticResource listBoxItemStyle}"
+					ItemContainerStyle="{StaticResource listBoxItemStyle}" Grid.ColumnSpan="2"
 				/>
 
 				<!--Canvas is being used to "draw" the rectangle and to know the valid area that the rectangle can be drawn on-->
@@ -377,7 +382,7 @@
 					Background="Transparent"
 					MouseDown="canvas_drawing_MouseDown"
 					MouseMove="canvas_drawing_MouseMove"
-					MouseUp="canvas_drawing_MouseUp"
+					MouseUp="canvas_drawing_MouseUp" Grid.ColumnSpan="2"
 					>
 					<Border 
 						x:Name="border_drawing"

@@ -73,6 +73,8 @@ namespace RectanglesOnImage_WPF_App
 			mRectangles.Remove( aRectangle );
 		}
 
+		
+
 		#endregion
 
 		#region INotifyPropertyChanged Members

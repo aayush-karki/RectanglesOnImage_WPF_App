@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -141,7 +142,49 @@ namespace RectanglesOnImage_WPF_App
 		/// </summary>
 		private void btn_SaveImg_Click( object sender , RoutedEventArgs e )
 		{
+			SaveFileDialog saveFileDialog = new SaveFileDialog();
+			saveFileDialog.Filter = "Image|*.jpg;*.jpeg;*png";
 
+			// user pressed ok
+			if( saveFileDialog.ShowDialog() == true )
+			{
+				// making a canvas to add the image and shape to it 
+				Canvas toSaveCanvas = new Canvas();
+
+				toSaveCanvas.Width = mBgImage.Width;
+				toSaveCanvas.Height = mBgImage.Height;
+				toSaveCanvas.Background = new ImageBrush( mBgImage );
+
+				// adding all the drawn shape
+				foreach( RectangleDataModel currRectangleData in RectangleData.RectangleDataInstance.Rectangles )
+				{
+					// get rectangle
+					Rectangle rect = currRectangleData.convertToRectangle();
+					toSaveCanvas.Children.Add( rect );
+				}
+
+				Size size = new Size( toSaveCanvas.Width , toSaveCanvas.Height );
+
+				toSaveCanvas.Measure( size );
+				toSaveCanvas.Arrange( new Rect( size ) );
+
+				RenderTargetBitmap toSaveRTBImage = new RenderTargetBitmap( ( int ) toSaveCanvas.Width ,
+					( int ) toSaveCanvas.Height , 1 / 96 , 1 / 96 , PixelFormats.Default );
+				toSaveRTBImage.Render( toSaveCanvas );
+
+				// Create a file stream for saving image
+				string path = saveFileDialog.FileName;
+
+				FileStream fileStream = new FileStream( path , FileMode.Create );
+				BmpBitmapEncoder encoder = new BmpBitmapEncoder();
+				// push the rendered bitmap to it
+				encoder.Frames.Add( BitmapFrame.Create( toSaveRTBImage ) );
+				// save the data to the stream
+				encoder.Save( fileStream );
+				fileStream.Close();
+
+				MessageBox.Show( "Image Saved Successfully..." );
+			}
 		}
 
 		/// <summary>
@@ -573,6 +616,5 @@ namespace RectanglesOnImage_WPF_App
 		private RectangleDataModel storedSelectedMouseDownRectangle;
 
 		#endregion
-
 	}
 }

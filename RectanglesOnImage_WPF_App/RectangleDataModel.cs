@@ -5,7 +5,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace RectanglesOnImage_WPF_App
 {
@@ -157,9 +159,27 @@ namespace RectanglesOnImage_WPF_App
 
 		#endregion
 
-		#region INotifyPropertyChanged Members
+		# region Public Methods
+		/// <summary>
+		/// converts the rectangle data model to rectangle and returns it
+		/// </summary>
+		/// <returns></returns>
+		public Rectangle convertToRectangle()
+        {
+            Rectangle rect = new Rectangle();
+            rect.Width = mWidth;
+            rect.Height = mHeight;
+            rect.Fill = new SolidColorBrush( mColor );
+            Canvas.SetTop( rect , Y );
+            Canvas.SetLeft( rect , X );
+            return rect;
+        }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
 		/// <summary>
 		/// Raises this object's PropertyChanged event.
