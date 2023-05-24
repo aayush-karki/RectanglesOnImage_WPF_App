@@ -1,7 +1,7 @@
 # RectanglesOnImage_WPF_App
 
 ## Introduction
-It is an application that allows the users to create and manipulate rectangles over an image. Through this applicaiton, user can load images, create rectangles over the image, drag the created rectangles, change color of the rectangle, delete the created rectangles, and save the image. 
+An WPF application that allows the users to create and manipulate rectangles over an image. It allows user to load images, create rectangles over the image, drag the created rectangles, change color of the rectangle, delete the created rectangles, and save the image. 
 
 ## Implemented Features
 This application allows the uses to perform following task:
